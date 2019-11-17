@@ -1,8 +1,9 @@
-from flask import Flask
+from flask import Flask, send_from_directory
+from os import path, getcwd
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='', static_folder='client/build')
 
 
 @app.route("/")
-def root():
-    return "Hello from Flask"
+def react_app():
+    return app.send_static_file('index.html')
