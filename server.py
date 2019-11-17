@@ -1,4 +1,4 @@
-from flask import Flask, send_from_directory
+from flask import Flask
 from os import path, getcwd
 
 app = Flask(__name__, static_url_path='', static_folder='build')
