@@ -15,25 +15,22 @@ def plan(products, resourceCount, periodsCount, fonds, resourceConsumption,
                 f"product_{product['id']}@period_{period}",
                 lowBound=mvp[period - 1][product['id']],
                 cat='Integer')
-            z += (1.0 / (product['priority'])) * var_product
+            z += (1.0 / (product['priority'] * period)) * var_product
             periodPlan[period - 1].append(var_product)
         for resource in range(resourceCount):
             problem += lpSum([
                 rc[resource] * periodPlan[period - 1][i]
                 for i, rc in enumerate(resourceConsumption)
-            ]) <= fonds[period - 1][resource]
-
-    problem.setObjective(z)
+            ]) <= fonds[period - 1][resource], ""
 
     for product in products:
         problem += lpSum([p[product['id']]
-                          for p in periodPlan]) == product['annual']
+                          for p in periodPlan]) == product['annual'], ""
 
-    for resource in range(resourceCount):
-        problem += lpSum([p[resource] for p in resourceConsumption])
-
+    problem += z
     problem.solve()
     if problem.status == LpStatusOptimal:
+        print(problem.objective)
         result = []
         for v in problem.variables():
             if v.name == '__dummy': continue

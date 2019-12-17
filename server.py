@@ -16,5 +16,4 @@ def react_app():
 @app.route("/api", methods=["POST"])
 def calendar_planning():
     json = request.get_json()
-    print('JSON: ', json)
     return dumps(plan(**json))
