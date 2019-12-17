@@ -5,12 +5,14 @@ verify_ssl = true
 
 [dev-packages]
 yapf = "*"
+pylint = "*"
 
 [packages]
 pulp = "*"
 flask = "*"
 gunicorn = "*"
 numpy = "*"
+flask-cors = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.6"

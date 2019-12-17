@@ -1,7 +1,11 @@
-from flask import Flask
+from flask import Flask, request
+from flask_cors import CORS
+from json import dumps
 from os import path, getcwd
+from planning import plan
 
 app = Flask(__name__, static_url_path='', static_folder='build')
+CORS(app)
 
 
 @app.route("/")
@@ -9,14 +13,8 @@ def react_app():
     return app.send_static_file('index.html')
 
 
-@app.route('/create')
-def lol():
-    file = open('test', 'w')
-    file.write('This is a test')
-    return 200
-
-
-@app.route('/get')
-def get():
-    file = open('test', 'r')
-    return file.read()
+@app.route("/api", methods=["POST"])
+def calendar_planning():
+    json = request.get_json()
+    print('JSON: ', json)
+    return dumps(plan(**json))
