@@ -79,7 +79,7 @@ def plan(products, resourceCount, periodsCount, fonds, resourceConsumption,
         periodPlan.append([])
         for product in products:
             var_product = LpVariable(
-                f"product_{product['id']}@period_{period}",
+                f"x_{product['id']}_{period}",
                 lowBound=mvp[period - 1][product['id']],
                 cat='Integer')
             z += (1.0 / (product['priority'] * period)) * var_product
@@ -97,16 +97,37 @@ def plan(products, resourceCount, periodsCount, fonds, resourceConsumption,
     problem += z
     problem.solve()
     if problem.status == LpStatusOptimal:
-        file_path = doc.save('docs')
-        # print(problem.objective)
-        result = []
+        doc.add_paragraph('Полученное решение', WD_ALIGN_PARAGRAPH.CENTER)
+        table = doc.d.add_table(2, periodsCount + 1)
+        table_head = table.rows[0].cells
+        table_head[1].merge(table_head[periodsCount]).text = 'Период'
+        table_head = table.rows[1].cells
+        table_head[0].text = 'Изделие'
+        for i in range(1, periodsCount + 1):
+            table_head[i].text = str(i)
+        result = {
+            'products': [],
+            'report': ''
+        }
+        row = None
         for v in problem.variables():
             if v.name == '__dummy': continue
-            result.append({
-                'name': v.name,
-                'value': v.varValue,
-                'document': f'https://toau1.herokuapp.com/report/{file_path}'
-            })
+            *_, productId, period = v.name.split('_')
+            productId = int(productId)
+            period = int(period)
+            if len(result['products']) <= productId:
+                row = table.add_row().cells
+                result['products'].append([])
+            row[0].text = str(productId + 1)
+            row[period].text = str(v.varValue)
+            result['products'][productId].insert(period, v.varValue)
+            # result.append({
+            #     'name': v.name,
+            #     'value': v.varValue
+            # })
+        file_path = doc.save('docs')
+        #result['report'] = f'https://toau1.herokuapp.com/report/{file_path}'
+        result['report'] = f'http://localhost:8000/report/{file_path}'
         return result
     else:
         return "Sosi hui"
