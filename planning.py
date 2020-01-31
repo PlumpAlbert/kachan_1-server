@@ -126,8 +126,8 @@ def plan(products, resourceCount, periodsCount, fonds, resourceConsumption,
             #     'value': v.varValue
             # })
         file_path = doc.save('docs')
-        #result['report'] = f'https://toau1.herokuapp.com/report/{file_path}'
-        result['report'] = f'http://localhost:8000/report/{file_path}'
+        result['report'] = f'https://toau1.herokuapp.com/report/{file_path}'
+        #result['report'] = f'http://localhost:8000/report/{file_path}'
         return result
     else:
         return "Sosi hui"
